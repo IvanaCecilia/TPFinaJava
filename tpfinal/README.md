@@ -18,7 +18,9 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
  
  Integrantes: 
- Dario Salvetti. Matias Beratz.Ivana Schwindt 
+ Dario Salvetti.Dni 41427479
+  Matias Beratz.Dni 44933215
+  Ivana Schwindt Dni 26704897
  Nombre del framework: 
  Creustacico 
  Tentativa de acciones y recursos: 
