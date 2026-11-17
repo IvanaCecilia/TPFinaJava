@@ -1,10 +1,10 @@
 package framework;
 
-public class enum Rol {
+public enum Rol {
     USUARIO,
-    ADMIN,
+    ADMIN;
 
-    public boolean puedeHacer (Rol requerido){
-return this==ADMIN|| this==requerido
+    public boolean puedeHacer(Rol requerido) {
+        return this == ADMIN || this == requerido;
     }
 }
