@@ -6,7 +6,7 @@ import java.net.Socket;
 
 import comunicador.Comunicador;
 
-public class main {
+public class Main {
 
 	public static void main(String[] args) throws Exception{
 
