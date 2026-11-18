@@ -1,20 +1,9 @@
-package app.framework;
+package framework;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class ParsearSolicitud {
-	
-	// Solicitud: transaccion/buscar/id
-	// Recurso: transaccion
-	// Accion: buscar
-
-	// get: Obtener todas las transacciones
-	// get/id: Obtener una transaccion por ID
-	// post
-	// delete
-	
-	// Parametros: http://localhost:5000/transaccion/accion/12+filtro
 
 	public static Solicitud parsearSolicitud(String texto) throws ExcepcionesFramework {
 		if(texto.isBlank()) {

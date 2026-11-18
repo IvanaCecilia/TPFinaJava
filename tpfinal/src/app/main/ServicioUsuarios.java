@@ -2,8 +2,8 @@ package app.main;
 
 import java.util.Map;
 
-import app.framework.ExcepcionesFramework;
-import app.framework.Rol;
+import framework.ExcepcionesFramework;
+import framework.Rol;
 
 public class ServicioUsuarios {
 	

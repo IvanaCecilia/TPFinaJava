@@ -2,8 +2,8 @@ package app.main;
 
 import java.io.IOException;
 
-import app.framework.Servicios;
-import app.framework.Servidor;
+import framework.Servicios;
+import framework.Servidor;
 public class Main {
 
 	public static void main(String[] args) {
