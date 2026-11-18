@@ -1,11 +1,11 @@
-package app;
+package app.main;
 
 import java.util.Map;
 import java.util.function.Function;
 
-import framework.Controlador;
-import framework.Servicios;
-import framework.Solicitud;
+import app.framework.Controlador;
+import app.framework.Servicios;
+import app.framework.Solicitud;
 
 public class ControladorUsuarios implements Controlador{
 	

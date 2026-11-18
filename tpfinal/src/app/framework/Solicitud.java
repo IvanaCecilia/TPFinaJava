@@ -1,4 +1,4 @@
-package framework;
+package app.framework;
 
 import java.util.List;
 

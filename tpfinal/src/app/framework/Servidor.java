@@ -1,4 +1,4 @@
-package framework;
+package app.framework;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -46,7 +46,7 @@ public class Servidor {
 				com.enviar(respuesta);
 			}
 
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			System.out.println("[" + hilo + "] " + "error de conexion: " + ex.getMessage());
 		}
 		System.out.println("[" + hilo + "] " + "se ha desconectado.");
