@@ -2,7 +2,7 @@ package framework;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import comunicador.Comunicador;
+
 
 public class Servidor {
 	private int puerto;

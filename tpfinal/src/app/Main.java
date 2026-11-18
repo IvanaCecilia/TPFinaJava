@@ -3,12 +3,19 @@ package app;
 import java.io.IOException;
 
 import framework.Servidor;
-
+import framework.Servicios;
 public class Main {
 
 	public static void main(String[] args) {
 		Servidor servidor = new Servidor(3000);
-		servidor.registrar(new ControladorTareas());
+		
+		Servicios servicios = servidor.getServicios();
+		servicios.registrar(ServicioUsuarios.class, new ServicioUsuarios());
+		
+		// Registro de controladores
+		//servidor.registrar(new ControladorTareas());
+		servidor.registrar(new ControladorUsuarios(servicios));
+		
 		try {
 			servidor.iniciar();
 		} catch (IOException ex) {
