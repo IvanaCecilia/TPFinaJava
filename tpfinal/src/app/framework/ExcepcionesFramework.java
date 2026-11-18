@@ -1,4 +1,4 @@
-package framework;
+package app.framework;
 
 public class ExcepcionesFramework extends RuntimeException{
 	public ExcepcionesFramework(String mensaje) {
