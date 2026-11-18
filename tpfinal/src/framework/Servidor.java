@@ -1,4 +1,4 @@
-package app.framework;
+package framework;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

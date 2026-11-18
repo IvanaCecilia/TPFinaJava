@@ -1,4 +1,4 @@
-package app.framework;
+package framework;
 
 import java.util.HashMap;
 import java.util.Map;

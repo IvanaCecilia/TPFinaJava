@@ -1,4 +1,4 @@
-package app.framework;
+package framework;
 
 public enum Rol {
     USUARIO,

@@ -3,9 +3,9 @@ package app.main;
 import java.util.Map;
 import java.util.function.Function;
 
-import app.framework.Controlador;
-import app.framework.Servicios;
-import app.framework.Solicitud;
+import framework.Controlador;
+import framework.Servicios;
+import framework.Solicitud;
 
 public class ControladorUsuarios implements Controlador{
 	

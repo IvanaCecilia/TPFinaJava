@@ -1,4 +1,4 @@
-package app.framework;
+package framework;
 
 public class Sesion {
     private String usuario;
