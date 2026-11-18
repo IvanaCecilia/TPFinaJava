@@ -3,58 +3,66 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import comunicador.Comunicador;
-import models.modelo;
-import services.ParsearSolicitud;
 
 public class Servidor {
-    private int puerto;
-    private Router router = new Router();
+	private int puerto;
+	private Router router = new Router();
+	private Servicios servicios = new Servicios();
 
-    public Servidor(int puerto) {
-        this.puerto = puerto;
-    }
+	public Servidor(int puerto) {
+		this.puerto = puerto;
+	}
 
-    public void registrar(Controlador controlador) {
-        router.registrar(controlador);
-    }
+	public void registrar(Controlador controlador) {
+		router.registrar(controlador);
+	}
 
-    public void iniciar() throws IOException {
-        try (ServerSocket serverSocket = new ServerSocket(puerto)) {
-            System.out.println("Servidor iniciado en el puerto " + puerto);
-            while (true) {
-                Socket socket = serverSocket.accept();
-                Thread hilo = new Thread(() -> atender(socket, router));
-                hilo.start();
-            }
-        }
-    }
+	public Servicios getServicios() {
+		return servicios;
+	}
 
-    public static void atender(Socket socket, Router router) {
-        String hilo = Thread.currentThread().getName();
-        try (Socket s = socket;
-             Comunicador com = new Comunicador(s.getInputStream(), s.getOutputStream())) {
-            com.enviar("Bienvenido al servidor");
+	public void iniciar() throws IOException {
+		try (ServerSocket servidor = new ServerSocket(puerto)) {
+			System.out.println("Servidor abierto en puerto: " + puerto);
+			while (true) {
+				Socket socket = servidor.accept();
+				Thread hilo = new Thread(() -> atender(socket));
+				hilo.start();
+			}
+		}
+	}
 
-            String linea;
-            while ((linea = com.recibir()) != null && !linea.equalsIgnoreCase("salir")) {
-                com.enviar(procesar(linea, router));
-            }
-        } catch (IOException | ExcepcionesFramework e) {
-            System.out.println("Error en el hilo " + hilo + ": " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Error en el hilo " + hilo + ": " + e.getMessage());
-        }
-        System.out.println("Hilo " + hilo + " se ha desconectado");
-    }
+	public void atender(Socket socket) {
+		String hilo = Thread.currentThread().getName();
+		Sesion sesion = new Sesion();
+		try (Socket s = socket; Comunicador com = new Comunicador(s.getInputStream(), s.getOutputStream())) {
 
-    private static String procesar(String linea, Router router) {
-        try {
-            modelo solicitud = ParsearSolicitud.parsearSolicitud(linea);
-            return "Ok " + router.despachar(solicitud);
-        } catch (ExcepcionesFramework e) {
-            return "Error: " + e.getMessage();
-        } catch (RuntimeException e) {
-            return "Error: " + e.getMessage();
-        }
-    }
+			com.enviar("Bienvenido");
+
+			String linea;
+			while ((linea = com.recibir()) != null && !linea.equalsIgnoreCase("salir")) {
+				String respuesta = procesar(linea, sesion);
+				System.out.println("[" + hilo + "]" + linea + " -> " + respuesta);
+				com.enviar(respuesta);
+			}
+
+		} catch (IOException ex) {
+			System.out.println("[" + hilo + "] " + "error de conexion: " + ex.getMessage());
+		}
+		System.out.println("[" + hilo + "] " + "se ha desconectado.");
+	}
+
+	private String procesar(String linea, Sesion sesion) {
+		try {
+			Solicitud solicitud = ParsearSolicitud.parsearSolicitud(linea);
+			solicitud.setSesion(sesion);
+			return "OK " + router.despachar(solicitud);
+		} catch (ExcepcionesFramework ex) {
+			return "ERROR " + ex.getMessage();
+		} catch (RuntimeException ex) {
+			ex.printStackTrace(); // -> Manteniendo el detalle del error dentro del servidor.
+			return "Error interno del servidor"; // -> Aca mandando al cliente algo mas general.
+		}
+	}
+
 }

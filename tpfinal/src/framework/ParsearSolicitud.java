@@ -1,10 +1,7 @@
-package services;
+package framework;
 
 import java.util.Arrays;
 import java.util.List;
-
-import framework.ExcepcionesFramework;
-import models.modelo;
 
 public class ParsearSolicitud {
 	
@@ -19,7 +16,7 @@ public class ParsearSolicitud {
 	
 	// Parametros: http://localhost:5000/transaccion/accion/12+filtro
 
-	public static modelo parsearSolicitud(String texto) throws ExcepcionesFramework {
+	public static Solicitud parsearSolicitud(String texto) throws ExcepcionesFramework {
 		if(texto.isBlank()) {
 			throw new ExcepcionesFramework("La solicitud está vacía.");
 		}
@@ -33,6 +30,6 @@ public class ParsearSolicitud {
 		
 		List<String> parametros = Arrays.stream(partes).skip(2).toList();
 		
-		return new modelo(partes[0], partes[1], parametros);
+		return new Solicitud(partes[0], partes[1], parametros);
 	}
 }

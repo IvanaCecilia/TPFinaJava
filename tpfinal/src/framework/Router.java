@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import models.modelo;
-
 public class Router {
 
 	private Map<String, Controlador> controladores = new HashMap<>();
@@ -15,11 +13,11 @@ public class Router {
 		controladores.put(controlador.recurso(), controlador);
 	}
 
-	public String despachar(modelo solicitud) {
+	public String despachar(Solicitud solicitud) {
 		Controlador c = Optional.ofNullable(controladores.get(solicitud.getRecurso()))
 				.orElseThrow(() -> new RuntimeException("No existe el recurso: '" + solicitud.getRecurso() + "'"));
 
-		Function<modelo, String> accion = Optional.ofNullable(c.acciones().get(solicitud.getAccion()))
+		Function<Solicitud, String> accion = Optional.ofNullable(c.acciones().get(solicitud.getAccion()))
 				.orElseThrow(() -> new RuntimeException("No existe la accion: '" + solicitud.getAccion() + "'"));
 		
 		return accion.apply(solicitud);
