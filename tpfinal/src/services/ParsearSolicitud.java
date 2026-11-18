@@ -3,7 +3,7 @@ package services;
 import java.util.Arrays;
 import java.util.List;
 
-import exeptions.excepcion;
+import framework.ExcepcionesFramework;
 import models.modelo;
 
 public class ParsearSolicitud {
@@ -19,16 +19,16 @@ public class ParsearSolicitud {
 	
 	// Parametros: http://localhost:5000/transaccion/accion/12+filtro
 
-	public static modelo parsearSolicitud(String texto) throws excepcion {
+	public static modelo parsearSolicitud(String texto) throws ExcepcionesFramework {
 		if(texto.isBlank()) {
-			throw new excepcion("La solicitud está vacía.");
+			throw new ExcepcionesFramework("La solicitud está vacía.");
 		}
 		
 		String[] partes = texto.split("/");
 		// partes = [transaccion], [buscar], ... []
 		
 		if(partes.length < 2) {
-			throw new excepcion("La solicitud es incorrecta. Se esperan dos partes y se mandó " + partes.length);
+			throw new ExcepcionesFramework("La solicitud es incorrecta. Se esperan dos partes y se mandó " + partes.length);
 		}
 		
 		List<String> parametros = Arrays.stream(partes).skip(2).toList();

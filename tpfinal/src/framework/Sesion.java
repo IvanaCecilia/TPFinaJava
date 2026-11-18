@@ -1,4 +1,4 @@
-package framework; 
+package framework;
 
 public class Sesion {
     private String usuario;

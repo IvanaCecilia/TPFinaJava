@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import comunicador.Comunicador;
-import exeptions.excepcion;
 import models.modelo;
 import services.ParsearSolicitud;
 
@@ -40,7 +39,7 @@ public class Servidor {
             while ((linea = com.recibir()) != null && !linea.equalsIgnoreCase("salir")) {
                 com.enviar(procesar(linea, router));
             }
-        } catch (IOException | excepcion e) {
+        } catch (IOException | ExcepcionesFramework e) {
             System.out.println("Error en el hilo " + hilo + ": " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Error en el hilo " + hilo + ": " + e.getMessage());
@@ -52,7 +51,7 @@ public class Servidor {
         try {
             modelo solicitud = ParsearSolicitud.parsearSolicitud(linea);
             return "Ok " + router.despachar(solicitud);
-        } catch (excepcion e) {
+        } catch (ExcepcionesFramework e) {
             return "Error: " + e.getMessage();
         } catch (RuntimeException e) {
             return "Error: " + e.getMessage();
