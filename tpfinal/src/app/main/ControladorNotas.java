@@ -22,8 +22,8 @@ public class ControladorNotas implements Controlador {
 
     private String cargarNota(Solicitud s) {
         // Si algo falla acá, lanza SolicitudInvalidaException solo y frena la ejecución
-        String nombreAlumno = s.parametro(0, "alumno", VALIDADOR_NOMBRE_ALUMNO);
-        String notaTexto = s.parametro(1, "nota", VALIDADOR_NOTA);
+        String nombreAlumno = s.getParametro(0, "alumno", VALIDADOR_NOMBRE_ALUMNO);
+        String notaTexto = s.getParametro(1, "nota", VALIDADOR_NOTA);
         
         double nota = Double.parseDouble(notaTexto.replace(",", "."));
         
