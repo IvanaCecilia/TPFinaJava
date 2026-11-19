@@ -168,3 +168,31 @@ El servidor procesa una solicitud por linea. Por cada solicitud valida el format
 - Error inesperado: `Error interno del servidor`
 
 Cada conexion mantiene su propia sesion. Esto significa que iniciar sesion en un cliente no afecta la sesion de otro cliente conectado.
+
+## Cambios recientes
+
+Desde la última actualización documentada se incorporaron los primeros elementos del módulo de notas:
+
+- Se añadió el modelo `Notas` en `src/app/models/Notas.java`.
+- El modelo se representa mediante un `record` con los siguientes datos:
+  - `nombre`: nombre asociado a las notas.
+  - `nota`: primera nota.
+  - `nota2`: segunda nota.
+  - `nota3`: tercera nota.
+- Se creó `ControladorNotas`
+- El nuevo controlador tiene el recurso `notas` y las acciones `mostrarNotas` y `subirNotas`.
+- El valor utilizara el formato `notas/mostrarNotas` y `notas/subirNotas` para las futuras solicitudes relacionadas con notas.
+
+> El módulo de notas se encuentra en desarrollo: las acciones `mostrarNotas` y `subirNotas` están registradas en el controlador, pero actualmente todavía devuelven el valor `notas`. Además, el controlador todavía no está registrado en `Main`.
+
+## Solicitudes del módulo de notas
+
+Ejemplos previstos para el módulo de notas:
+
+```text
+notas/mostrarNotas
+```
+
+```text
+notas/subirNotas
+```
