@@ -54,13 +54,13 @@ public class Solicitud {
 }
 
 
-	/*public String getParametro(int indice, String nombre) {
+	public String getParametro(int indice, String nombre) {
 		if(indice >= parametros.size()) {
 			throw new SolicitudInvalidaException("Falta el parametro '" + nombre + "'");
 		}
 		return parametros.get(indice);
 	}
-*/
+
 	public void setParametros(List<String> parametros) {
 		this.parametros = parametros;
 	}
