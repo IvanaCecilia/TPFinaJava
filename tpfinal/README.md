@@ -169,6 +169,30 @@ El servidor procesa una solicitud por linea. Por cada solicitud valida el format
 
 Cada conexion mantiene su propia sesion. Esto significa que iniciar sesion en un cliente no afecta la sesion de otro cliente conectado.
 
+## Manejo de excepciones
+
+El proyecto utiliza excepciones para separar los errores esperables de los errores inesperados:
+
+- `ExcepcionesFramework` extiende de `RuntimeException`, por lo que es una excepción **unchecked**.
+- `SolicitudInvalidaException` representa errores en el formato o en los parámetros de una solicitud.
+- `AccesoDenegadoException` representa que el usuario no inició sesión o no tiene permisos para realizar una acción.
+- También se utiliza `ExcepcionesFramework` para errores de aplicación controlados, como credenciales incorrectas o servicios no registrados.
+
+Se eligieron excepciones **unchecked** porque representan errores que pueden producirse durante la operación normal de una solicitud y no requieren agregar `throws` a todos los métodos por los que podría propagarse la excepción. Además, permiten que el método `procesar` del servidor las capture una única vez y convierta el problema en una respuesta controlada:
+
+```text
+ERROR <mensaje>
+```
+
+Por el contrario, una excepción **checked** sí obliga al compilador a declarar o capturar el problema mediante `throws` o `try/catch`. Java utiliza checked exceptions para operaciones de entrada y salida, por ejemplo `IOException` y sus derivados. En este proyecto, `IOException` se utiliza al abrir el servidor o al trabajar con sockets y comunicaciones de red, por lo que se declara en métodos como `iniciar` y `recibir` y se captura en el código correspondiente.
+
+Finalmente, en `Servidor.procesar` existen dos niveles de manejo:
+
+- `ExcepcionesFramework`: son errores esperables y se informan al cliente sin exponer detalles internos.
+- `RuntimeException`: es la excepción genérica para errores inesperados. El servidor registra el detalle en la consola y responde al cliente con `Error interno del servidor`.
+
+Esta diferencia permite que el cliente reciba mensajes útiles para errores conocidos y evita que detalles técnicos o fallos internos se envíen al exterior.
+
 ## Cambios recientes
 
 Desde la última actualización documentada se incorporaron los primeros elementos del módulo de notas:
