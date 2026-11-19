@@ -179,7 +179,7 @@ Desde la última actualización documentada se incorporaron los primeros element
   - `nota`: primera nota.
   - `nota2`: segunda nota.
   - `nota3`: tercera nota.
-- Se creó `ControladorNotas`
+- Se creó `ControladorNotas` en `src/app/main/ControladorNotas.java` para exponer las acciones relacionadas con notas.
 - El nuevo controlador tiene el recurso `notas` y las acciones `mostrarNotas` y `subirNotas`.
 - El valor utilizara el formato `notas/mostrarNotas` y `notas/subirNotas` para las futuras solicitudes relacionadas con notas.
 
