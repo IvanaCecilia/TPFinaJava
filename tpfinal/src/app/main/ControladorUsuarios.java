@@ -37,12 +37,15 @@ public class ControladorUsuarios implements Controlador {
 
 	// -> /usuarios/login/nombre/clave
 	private String login(Solicitud s) {
+		if(usuarioLogueado(s) != "(nadie)"){
+			return "cierra sesion primero";
+		}else{
 		String nombre = s.getParametro(0, "nombre");
 		String clave = s.getParametro(1, "clave");
 
 		Usuario usuario = usuarios.autenticar(nombre, clave);
 		s.getSesion().iniciar(usuario.nombre(), usuario.rol());
-		return "Hola, " + usuario.nombre() + " (" + usuario.rol() + ")";
+		return "Hola, " + usuario.nombre() + " (" + usuario.rol() + ")";}
 	}
 
 	// -> /usuarios/logout
