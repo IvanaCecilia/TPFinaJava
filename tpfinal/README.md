@@ -39,7 +39,7 @@ El proyecto implementa:
 
 Para comprobar la instalación:
 
-```bat
+```sh
 java -version
 javac -version
 ```
@@ -48,25 +48,25 @@ javac -version
 
 Abrir una terminal dentro de la carpeta `tpfinal` y compilar el proyecto:
 
-```bat
-javac -d bin src\framework\*.java src\app\main\*.java src\app\models\*.java src\cliente\*.java
+```sh
+javac -d bin src/framework/*.java src/app/main/*.java src/app/models/*.java src/cliente/*.java
 ```
 
 Desde el mismo directorio, iniciar el servidor:
 
-```bat
+```sh
 java -cp bin app.main.Main
 ```
 
 El servidor escucha en el puerto `3000` y queda a la espera de conexiones. Para iniciar el cliente de consola en otra terminal:
 
-```bat
+```sh
 java -cp bin cliente.ClienteConsola
 ```
 
 También se puede indicar un host y un puerto:
 
-```bat
+```sh
 java -cp bin cliente.ClienteConsola localhost 3000
 ```
 

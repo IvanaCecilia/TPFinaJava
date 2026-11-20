@@ -1,25 +1,38 @@
 package app.main;
 
-import java.io.IOException;
-
-import framework.Servicios;
+import framework.Router;
 import framework.Servidor;
+import framework.Servicios;
+import framework.Sesion;
+import framework.Solicitud;
+import framework.Validador;
+import framework.ValidadorDecimales;
+import framework.ValidadorLargoTexto;
+import framework.ValidadorRangoNota;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Main {
 
-	public static void main(String[] args) {
-		Servidor servidor = new Servidor(3000);
-		
-		Servicios servicios = servidor.getServicios();
-		servicios.registrar(ServicioUsuarios.class, new ServicioUsuarios());
-		
-		// Registro de controladores
-		//servidor.registrar(new ControladorTareas());
-		servidor.registrar(new ControladorUsuarios(servicios));
-		
-		try {
-			servidor.iniciar();
-		} catch (IOException ex) {
-			System.out.println("No se pudo iniciar el servidor: " + ex.getMessage());
-		}
-	}
+    public static void main(String[] args) {
+        int puerto = 3000;
+        Servidor servidor = new Servidor(puerto);
+        Servicios servicios = new Servicios();
+
+        ControladorNotas controladorNotas = new ControladorNotas();
+        servicios.registrar(ControladorNotas.class, controladorNotas);
+        servidor.registrar(controladorNotas);
+
+        ControladorUsuarios controladorUsuarios = new ControladorUsuarios(servicios);
+        servicios.registrar(ControladorUsuarios.class, controladorUsuarios);
+        servidor.registrar(controladorUsuarios);
+
+        try {
+            servidor.iniciar();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
