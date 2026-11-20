@@ -5,3 +5,9 @@ public class ExcepcionesChecked extends Exception{
         super(mensaje);
     }
 }
+
+class AccesoDenegadoException extends ExcepcionesChecked {
+	public AccesoDenegadoException(String mensaje) {
+		super(mensaje);
+	}
+}
