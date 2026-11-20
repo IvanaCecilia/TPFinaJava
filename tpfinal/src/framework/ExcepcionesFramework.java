@@ -14,10 +14,6 @@ class SolicitudInvalidaException extends ExcepcionesFramework{
 	
 }
 
-class AccesoDenegadoException extends ExcepcionesFramework {
-	public AccesoDenegadoException(String mensaje) {
-		super(mensaje);
-	}
-}
+
 
 

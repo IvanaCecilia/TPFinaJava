@@ -26,7 +26,7 @@ public class Sesion {
         return usuario != null;
     }
 
-    public void verificar(Rol requerido) {
+    public void verificar(Rol requerido) throws ExcepcionesChecked {
         if (!estaLogueado()) {
             throw new AccesoDenegadoException("Tenes que iniciar sesion");
         }
