@@ -48,10 +48,10 @@ public class Solicitud {
 	}
 	
 	public String getParametro(int indice, String nombre, Validador<String> validador) {
-    String valor = getParametro(indice, nombre, validador);
-    validador.validar(valor);
-    return valor;
-}
+		String valor = getParametro(indice, nombre);
+		validador.validar(valor);
+		return valor;
+	}
 
 
 	public String getParametro(int indice, String nombre) {

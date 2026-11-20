@@ -60,8 +60,8 @@ public class Servidor {
 		} catch (ExcepcionesFramework ex) {
 			return "ERROR " + ex.getMessage();
 		} catch (RuntimeException ex) {
-			ex.printStackTrace(); // -> Manteniendo el detalle del error dentro del servidor.
-			return "Error interno del servidor"; // -> Aca mandando al cliente algo mas general.
+			ex.printStackTrace();
+			return "ERROR Error interno del servidor";
 		}
 	}
 
