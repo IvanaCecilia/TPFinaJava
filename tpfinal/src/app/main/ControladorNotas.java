@@ -28,9 +28,9 @@ public class ControladorNotas implements Controlador {
 	@Override
 	public Map<String, Function<Solicitud, String>> acciones() {
 		return Map.of(
-				"verNota", this::verNota,
-				"cargarNota", this::cargarNota,
-				"modificarNota", this::modificarNota
+				"ver", this::ver,
+				"cargar", this::cargar,
+				"modificar", this::modificar
 		);
 	}
 
@@ -42,19 +42,19 @@ public class ControladorNotas implements Controlador {
 	@Override
 	public Map<String, Rol> permisos() {
 		return Map.of(
-				"cargarNota", Rol.ADMIN,
-				"modificarNota", Rol.ADMIN,
-				"verNota", Rol.USUARIO
+				"cargar", Rol.ADMIN,
+				"modificar", Rol.ADMIN,
+				"ver", Rol.USUARIO
 		);
 	}
 
-	public String verNota(Solicitud s) {
+	public String ver(Solicitud s) {
 		String nombreAlumno = s.getParametro(0, "alumno", VALIDADOR_NOMBRE_ALUMNO);
 		Notas registro = notas.verNota(nombreAlumno);
 		return registro.toString();
 	}
 
-	public String cargarNota(Solicitud s) {
+	public String cargar(Solicitud s) {
 		String nombreAlumno = s.getParametro(0, "alumno", VALIDADOR_NOMBRE_ALUMNO);
 		String notaTexto = s.getParametro(1, "nota", VALIDADOR_NOTA);
 		double nota = Double.parseDouble(notaTexto.replace(",", "."));
@@ -62,7 +62,7 @@ public class ControladorNotas implements Controlador {
 		return "Nota " + posicion + " cargada para " + nombreAlumno + ": " + nota;
 	}
 
-	public String modificarNota(Solicitud s) {
+	public String modificar(Solicitud s) {
 		String nombreAlumno = s.getParametro(0, "alumno", VALIDADOR_NOMBRE_ALUMNO);
 		int posicion = parsearPosicion(s.getParametro(1, "posicion"));
 		String notaTexto = s.getParametro(2, "nota", VALIDADOR_NOTA);
