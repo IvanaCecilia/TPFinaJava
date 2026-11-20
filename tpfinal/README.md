@@ -1,89 +1,197 @@
 # Creustacico
 
-Creustacico es una aplicacion desarrollada en Java como trabajo practico final de la materia Tecnologias Java.
+Creustacico es una aplicación desarrollada en Java como trabajo práctico final de la materia Tecnologías Java.
 
-El proyecto implementa un servidor de consola basado en sockets TCP y un framework propio que permite registrar recursos, acciones, servicios y sesiones de usuario. Actualmente incluye una aplicacion de ejemplo para iniciar sesion, consultar el usuario activo y cerrar sesion.
+El proyecto implementa:
+
+- Un servidor TCP multicliente basado en sockets.
+- Un cliente de consola para enviar solicitudes por texto.
+- Un framework propio para registrar recursos, acciones y servicios.
+- Sesiones independientes para cada conexión.
+- Usuarios con roles `USUARIO` y `ADMIN`.
+- Permisos declarados por cada controlador.
+- Un módulo inicial de notas en desarrollo.
 
 ## Integrantes
 
-- Dario Salvetti - DNI 41427479
-- Matias Beratz - DNI 44933215
+- Darío Salvetti - DNI 41427479
+- Matías Beratz - DNI 44933215
 - Ivana Schwindt - DNI 26704897
 
-## Objetivo del proyecto
+## Objetivos de aprendizaje
 
-El objetivo es practicar y demostrar los conceptos principales de Java mediante una arquitectura modular:
-
-- Programacion orientada a objetos.
-- Comunicacion cliente-servidor mediante sockets.
-- Concurrencia con hilos.
-- Manejo de solicitudes y respuestas por texto.
-- Registro y despacho de acciones.
-- Gestion de sesiones.
-- Separacion entre framework y aplicacion.
-- Manejo basico de roles y permisos.
+- Programación orientada a objetos.
+- Registros (`record`) y enums.
+- Comunicación cliente-servidor mediante sockets TCP.
+- Concurrencia con un hilo por cliente.
+- Protocolo de solicitudes y respuestas basado en texto.
+- Registro y despacho dinámico de acciones.
+- Inyección básica de servicios mediante un contenedor propio.
+- Gestión de sesiones por conexión.
+- Manejo de roles y permisos.
+- Separación entre framework reutilizable y aplicación concreta.
+- Manejo de excepciones controladas y errores internos.
 
 ## Requisitos
 
 - Java JDK 17 o superior.
-- Visual Studio Code con la Extension Pack for Java, opcional para ejecutar desde el editor.
+- Visual Studio Code con soporte para Java, opcional.
 
-Para verificar la instalacion de Java:
+Para comprobar la instalación:
 
 ```bat
 java -version
 javac -version
 ```
 
-## Ejecucion
+## Compilación y ejecución
 
-Abrir una terminal en la carpeta `tpfinal` y compilar todos los archivos Java:
+Abrir una terminal dentro de la carpeta `tpfinal` y compilar el proyecto:
 
 ```bat
-javac -d bin src\app\framework\*.java src\app\main\*.java src\cliente\*.java
+javac -d bin src\framework\*.java src\app\main\*.java src\app\models\*.java src\cliente\*.java
 ```
 
-Luego iniciar el servidor:
+Desde el mismo directorio, iniciar el servidor:
 
 ```bat
 java -cp bin app.main.Main
 ```
 
-El servidor quedara disponible en el puerto `3000`. En otra terminal, iniciar el cliente de consola:
+El servidor escucha en el puerto `3000` y queda a la espera de conexiones. Para iniciar el cliente de consola en otra terminal:
 
 ```bat
 java -cp bin cliente.ClienteConsola
 ```
 
-Tambien se puede indicar el host y el puerto:
+También se puede indicar un host y un puerto:
 
 ```bat
 java -cp bin cliente.ClienteConsola localhost 3000
 ```
 
-Para desconectarse desde el cliente, escribir `salir`.
+Para desconectarse desde el cliente se puede escribir `salir`.
 
-## Uso rapido
+## Uso rápido
 
-Al conectarse, el servidor responde con `Bienvenido`.
+Al establecer la conexión, el servidor responde:
 
-Las solicitudes utilizan el siguiente formato:
+```text
+Bienvenido
+```
+
+Las solicitudes tienen el siguiente formato:
 
 ```text
 recurso/accion/parametro1/parametro2
 ```
 
-Las respuestas exitosas comienzan con `OK` y los errores controlados comienzan con `ERROR`.
+- Cada línea enviada por el cliente representa una solicitud independiente.
+- Los parámetros están separados por `/`.
+- Las respuestas exitosas comienzan con `OK `.
+- Los errores controlados comienzan con `ERROR `.
+- Los recursos y acciones inexistentes pueden producir un error interno, y el servidor registra el detalle en la consola.
 
-### Iniciar sesion
-
-Usuarios disponibles:
+### Usuarios disponibles
 
 | Usuario | Clave | Rol |
 |---|---|---|
-| ana | 1234 | USUARIO |
-| beto | 4321 | USUARIO |
-| admin | admin | ADMIN |
+| `ana` | `1234` | `USUARIO` |
+| `beto` | `4321` | `USUARIO` |
+| `admin` | `admin` | `ADMIN` |
+
+### Iniciar sesión
+
+```text
+usuarios/login/ana/1234
+```
+
+Respuesta:
+
+```text
+OK Hola, ana (USUARIO)
+```
+
+La sesión pertenece a la conexión. Si se inicia sesión desde un cliente, otro cliente conectado no comparte esa sesión.
+
+### Consultar el usuario actual
+
+```text
+usuarios/usuarioLogueado
+```
+
+Con una sesión activa:
+
+```text
+OK Usuario logueado: ana (USUARIO)
+```
+
+Sin una sesión activa:
+
+```text
+OK (nadie)
+```
+
+### Cerrar sesión
+
+```text
+usuarios/logout
+```
+
+La sesión se limpia y posteriormente `usuarioLogueado` informa `(nadie)`.
+
+## Arquitectura general
+
+```text
+ClienteConsola
+      |
+      | socket TCP / texto
+      v
+Servidor
+  |-- acepta una conexión
+  |-- crea una Sesion para el cliente
+  |-- crea un hilo de atención
+  |-- llama a ParsearSolicitud
+  |-- delega a Router
+  |-- ejecuta la acción del Controlador
+  `-- devuelve una respuesta
+```
+
+Cada conexión se procesa en un hilo independiente. El servidor crea una instancia de `Sesion` dentro de `atender`, de modo que el usuario y el rol están aislados por cliente.
+
+## Framework implementado
+
+### `Servidor`
+
+Archivo: `src/framework/Servidor.java`
+
+- Abre un `ServerSocket` sobre el puerto indicado.
+- Acepta conexiones de clientes en forma continua.
+- Crea un hilo nuevo para cada cliente.
+- Mantiene una sesión independiente por conexión.
+- Envía `Bienvenido` al conectarse.
+- Atiende solicitudes línea por línea.
+- Ignora la solicitud `salir` como instrucción de desconexión.
+- Contiene el método `procesar`, que diferencia excepciones controladas de errores inesperados.
+- Expone el registro de servicios mediante `getServicios()`.
+
+### `Comunicador`
+
+Archivo: `src/framework/Comunicador.java`
+
+- Encapsula los flujos de entrada y salida del socket.
+- Lee y envía líneas de texto.
+- Implementa `AutoCloseable` para cerrar los recursos con `try-with-resources`.
+
+### `ParsearSolicitud`
+
+Archivo: `src/framework/ParsearSolicitud.java`
+
+- Verifica que la línea no esté vacía.
+- Exige al menos recurso y acción.
+- Divide el texto con `/`.
+- Convierte el texto en un objeto `Solicitud`.
+- Los elementos posteriores a recurso y acción se consideran parámetros.
 
 Ejemplo:
 
@@ -91,132 +199,195 @@ Ejemplo:
 usuarios/login/ana/1234
 ```
 
-Respuesta esperada:
+Produce conceptualmente:
 
 ```text
-OK Hola, ana (USUARIO)
+recurso: usuarios
+accion: login
+parametros: [ana, 1234]
 ```
 
-### Consultar el usuario logueado
+### `Solicitud`
+
+Archivo: `src/framework/Solicitud.java`
+
+Representa una solicitud con:
+
+- Recurso.
+- Acción.
+- Lista de parámetros.
+- Sesión asociada.
+
+El método `getParametro(indice, nombre)` obtiene un parámetro por posición y lanza `SolicitudInvalidaException` si falta.
+
+### `Router`
+
+Archivo: `src/framework/Router.java`
+
+- Guarda los controladores en un `Map` usando el nombre del recurso como clave.
+- Busca el recurso y la acción solicitados.
+- Ejecuta la función asociada a la acción.
+
+### `Controlador`
+
+Archivo: `src/framework/Controlador.java`
+
+Define la interfaz común que deben implementar los controladores:
+
+- `recurso()`: nombre del recurso.
+- `acciones()`: acciones disponibles y funciones que las procesan.
+- `permisos()`: permisos opcionales por acción.
+
+### `Servicios`
+
+Archivo: `src/framework/Servicios.java`
+
+Permite registrar y obtener servicios mediante su clase Java. Por ejemplo, `ServicioUsuarios` se registra con `ServicioUsuarios.class` y luego puede ser obtenido por `ControladorUsuarios`.
+
+Si se solicita un servicio que no fue registrado, se lanza una excepción controlada del framework.
+
+### `Sesion`
+
+Archivo: `src/framework/Sesion.java`
+
+Guarda el usuario y el rol asociados a una conexión. Permite iniciar la sesión, cerrarla y comprobar si existe un usuario conectado. Además, el método `verificar(Rol requerido)` permite comprobar autenticación y permisos.
+
+`ADMIN` puede realizar acciones de `USUARIO` y `ADMIN`. `USUARIO` sólo puede realizar acciones que requieran `USUARIO`.
+
+### `Rol`
+
+Archivo: `src/framework/Rol.java`
+
+Enum utilizado para representar los roles:
+
+- `USUARIO`
+- `ADMIN`
+
+Su método `puedeHacer(Rol requerido)` determina si un rol tiene acceso a una acción.
+
+### Excepciones
+
+Archivo: `src/framework/ExcepcionesFramework.java`
+
+- `ExcepcionesFramework`: error general del framework o de la aplicación.
+- `SolicitudInvalidaException`: falta o es incorrecto un parámetro.
+- `AccesoDenegadoException`: el usuario no inició sesión o no tiene permisos suficientes.
+
+Las excepciones controladas generan una respuesta `ERROR <mensaje>`. Los errores inesperados se registran en el servidor y se responden al cliente con `Error interno del servidor`.
+
+## Aplicación
+
+### `Main`
+
+Archivo: `src/app/main/Main.java`
+
+Crea el servidor en el puerto `3000`, registra `ServicioUsuarios` y registra `ControladorUsuarios`. Luego inicia el servidor y captura posibles errores de inicio.
+
+Actualmente `ControladorNotas` no está registrado en `Main`.
+
+### `Usuario`
+
+Archivo: `src/app/main/Usuario.java`
+
+Es un `record` con nombre, clave y rol del usuario.
+
+### `ServicioUsuarios`
+
+Archivo: `src/app/main/ServicioUsuarios.java`
+
+Mantiene una colección de usuarios en memoria:
+
+- `ana` / `1234` / `USUARIO`
+- `beto` / `4321` / `USUARIO`
+- `admin` / `admin` / `ADMIN`
+
+El método `autenticar` verifica las credenciales y devuelve el usuario correspondiente. Los datos no se guardan en una base de datos o archivo.
+
+### `ControladorUsuarios`
+
+Archivo: `src/app/main/ControladorUsuarios.java`
+
+Recurso: `usuarios`
+
+| Acción | Parámetros | Resultado |
+|---|---|---|
+| `login` | nombre, clave | Inicia la sesión del usuario. |
+| `logout` | ninguno | Cierra la sesión actual. |
+| `usuarioLogueado` | ninguno | Muestra el usuario activo o `(nadie)`. |
+
+Ejemplos:
 
 ```text
+usuarios/login/beto/4321
 usuarios/usuarioLogueado
-```
-
-Ejemplo de respuesta con sesion activa:
-
-```text
-OK Usuario logueado: ana (USUARIO)
-```
-
-Ejemplo sin sesion activa:
-
-```text
-OK (nadie)
-```
-
-### Cerrar sesion
-
-```text
 usuarios/logout
 ```
 
-## Arquitectura
+### `ClienteConsola`
 
-### Framework
+Archivo: `src/cliente/ClienteConsola.java`
 
-- `Servidor`: abre el puerto TCP, acepta conexiones y crea una sesion para cada cliente.
-- `Comunicador`: envia y recibe mensajes de texto por la conexion.
-- `Router`: relaciona recursos con controladores y acciones.
-- `Solicitud`: representa el recurso, la accion y sus parametros.
-- `ParsearSolicitud`: convierte una linea de texto en una solicitud.
-- `Controlador`: interfaz que deben implementar los controladores.
-- `Servicios`: registro simple de servicios disponibles para los controladores.
-- `Sesion`: mantiene el usuario y el rol asociados a una conexion.
-- `Rol`: define los roles `USUARIO` y `ADMIN`.
-- `ExcepcionesFramework`: contiene las excepciones utilizadas por el framework.
+Se conecta mediante TCP a un host y puerto, lee las respuestas del servidor en un hilo separado y permite escribir solicitudes desde la consola. Por defecto utiliza `localhost:3000` y utiliza UTF-8.
 
-### Aplicacion
+## Módulo de notas
 
-- `Main`: inicia el servidor en el puerto `3000`, registra los servicios y controladores.
-- `ControladorUsuarios`: expone las acciones `login`, `logout` y `usuarioLogueado`.
-- `ServicioUsuarios`: contiene los usuarios y realiza la autenticacion.
-- `Usuario`: representa los datos basicos de un usuario.
-- `ClienteConsola`: permite enviar solicitudes al servidor desde la consola.
+### `Notas`
+
+Archivo: `src/app/models/Notas.java`
+
+Es un `record` con los datos `nombre`, `nota`, `nota2` y `nota3`.
+
+### `ControladorNotas`
+
+Archivo: `src/app/main/ControladorNotas.java`
+
+Recurso: `notas`
+
+| Acción | Rol requerido |
+|---|---|
+| `verNota` | `USUARIO` |
+| `cargarNota` | `ADMIN` |
+| `modificarNota` | `ADMIN` |
+
+Solicitudes previstas:
+
+```text
+notas/verNota
+notas/cargarNota
+notas/modificarNota
+```
+
+Las acciones todavía son un esqueleto y devuelven el texto `notas`. Falta registrar el controlador en `Main`, implementar el manejo real de notas y aplicar los permisos desde el flujo de despacho.
 
 ## Estructura del proyecto
 
 ```text
 tpfinal/
 |-- src/
+|   |-- framework/       Framework del servidor
 |   |-- app/
-|   |   |-- framework/       Implementacion del framework
-|   |   `-- main/            Aplicacion y modelo de usuarios
-|   `-- cliente/             Cliente TCP de consola
-|-- bin/                     Archivos compilados
-|-- lib/                     Librerias externas
+|   |   |-- main/        Usuario y controladores
+|   |   `-- models/      Modelo de notas
+|   `-- cliente/         Cliente de consola
+|-- bin/                 Archivos compilados
+|-- lib/                 Librerías externas
 `-- README.md
 ```
 
-## Comportamiento de las respuestas
+## Flujo de una solicitud
 
-El servidor procesa una solicitud por linea. Por cada solicitud valida el formato y busca el recurso y la accion registrados.
+1. El cliente envía una línea al servidor.
+2. `Comunicador` recibe el texto.
+3. `ParsearSolicitud` crea una `Solicitud` con recurso, acción y parámetros.
+4. La sesión del cliente se agrega a la solicitud.
+5. `Router` busca el recurso y la acción correspondiente.
+6. El controlador ejecuta la acción y devuelve un resultado.
+7. El servidor responde con `OK <resultado>` o `ERROR <mensaje>`.
 
-- Solicitud valida: `OK <mensaje>`
-- Solicitud o parametro invalido: `ERROR <mensaje>`
-- Accion o recurso inexistente: respuesta de error controlada por el servidor
-- Error inesperado: `Error interno del servidor`
+## Trabajo pendiente
 
-Cada conexion mantiene su propia sesion. Esto significa que iniciar sesion en un cliente no afecta la sesion de otro cliente conectado.
-
-## Manejo de excepciones
-
-El proyecto utiliza excepciones para separar los errores esperables de los errores inesperados:
-
-- `ExcepcionesFramework` extiende de `RuntimeException`, por lo que es una excepción **unchecked**.
-- `SolicitudInvalidaException` representa errores en el formato o en los parámetros de una solicitud.
-- `AccesoDenegadoException` representa que el usuario no inició sesión o no tiene permisos para realizar una acción.
-- También se utiliza `ExcepcionesFramework` para errores de aplicación controlados, como credenciales incorrectas o servicios no registrados.
-
-Se eligieron excepciones **unchecked** porque representan errores que pueden producirse durante la operación normal de una solicitud y no requieren agregar `throws` a todos los métodos por los que podría propagarse la excepción. Además, permiten que el método `procesar` del servidor las capture una única vez y convierta el problema en una respuesta controlada:
-
-```text
-ERROR <mensaje>
-```
-
-Por el contrario, una excepción **checked** sí obliga al compilador a declarar o capturar el problema mediante `throws` o `try/catch`. Java utiliza checked exceptions para operaciones de entrada y salida, por ejemplo `IOException` y sus derivados. En este proyecto, `IOException` se utiliza al abrir el servidor o al trabajar con sockets y comunicaciones de red, por lo que se declara en métodos como `iniciar` y `recibir` y se captura en el código correspondiente.
-
-Finalmente, en `Servidor.procesar` existen dos niveles de manejo:
-
-- `ExcepcionesFramework`: son errores esperables y se informan al cliente sin exponer detalles internos.
-- `RuntimeException`: es la excepción genérica para errores inesperados. El servidor registra el detalle en la consola y responde al cliente con `Error interno del servidor`.
-
-Esta diferencia permite que el cliente reciba mensajes útiles para errores conocidos y evita que detalles técnicos o fallos internos se envíen al exterior.
-
-## Cambios recientes
-
-Desde la última actualización documentada se incorporaron los primeros elementos del módulo de notas:
-
-- Se añadió el modelo `Notas` en `src/app/models/Notas.java`.
-- El modelo se representa mediante un `record` con los siguientes datos:
-  - `nombre`: nombre asociado a las notas.
-  - `nota`: primera nota.
-  - `nota2`: segunda nota.
-  - `nota3`: tercera nota.
-- Se creó `ControladorNotas` en `src/app/main/ControladorNotas.java` para exponer las acciones relacionadas con notas.
-- El nuevo controlador tiene el recurso `notas` y las acciones `mostrarNotas` y `subirNotas`.
-- El valor utilizara el formato `notas/mostrarNotas` y `notas/subirNotas` para las futuras solicitudes relacionadas con notas.
-
-> El módulo de notas se encuentra en desarrollo: las acciones `mostrarNotas` y `subirNotas` están registradas en el controlador, pero actualmente todavía devuelven el valor `notas`. Además, el controlador todavía no está registrado en `Main`.
-
-## Solicitudes del módulo de notas
-
-Ejemplos previstos para el módulo de notas:
-
-```text
-notas/mostrarNotas
-```
-
-```text
-notas/subirNotas
-```
+- Registrar `ControladorNotas` en `Main`.
+- Implementar carga, consulta y modificación de notas.
+- Agregar persistencia mediante archivos o una base de datos.
+- Aplicar los permisos definidos por los controladores.
+- Incorporar pruebas automáticas para usuarios, notas y el framework.
