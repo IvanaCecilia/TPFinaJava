@@ -61,9 +61,7 @@ public class ControladorNotas implements Controlador {
     public String verNota(Solicitud solicitud) {
         return "notas";
     }
-    public String cargarNota(Solicitud solicitud) {
-        return "notas";
-    }
+
     public String modificarNota(Solicitud solicitud) {
         return "notas";
     }
