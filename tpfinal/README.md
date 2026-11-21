@@ -267,13 +267,16 @@ Su método `puedeHacer(Rol requerido)` determina si un rol tiene acceso a una ac
 
 ### Excepciones
 
-Archivo: `src/framework/ExcepcionesFramework.java`
+Archivos: `src/framework/ExcepcionesFramework.java` y `src/framework/ExcepcionesChecked.java`
 
 - `ExcepcionesFramework`: error general del framework o de la aplicación.
 - `SolicitudInvalidaException`: falta o es incorrecto un parámetro.
 - `AccesoDenegadoException`: el usuario no inició sesión o no tiene permisos suficientes.
+- `ExcepcionesChecked`: error de entrada/salida al iniciar o mantener el servidor, por ejemplo, si el puerto no está disponible.
 
-Las excepciones controladas generan una respuesta `ERROR <mensaje>`. Los errores inesperados se registran en el servidor y se responden al cliente con `Error interno del servidor`.
+`ExcepcionesChecked` hereda de `Exception` para que el código que inicia el servidor deba contemplar una falla previsible del entorno o de la configuración. `Servidor.iniciar()` la lanza cuando ocurre un error de socket y conserva la causa original; `Main` la captura y comunica el problema.
+
+`ExcepcionesFramework` y sus subclases, incluida `SolicitudInvalidaException`, heredan de `RuntimeException`. Representan problemas encontrados al procesar una solicitud en tiempo de ejecución, como datos faltantes o inválidos y permisos insuficientes. No obligan a declarar o capturar cada error en todas las capas: `Servidor.procesar()` los convierte en respuestas controladas `ERROR <mensaje>`. Los errores inesperados se registran en el servidor y se responden al cliente con `Error interno del servidor`.
 
 ## Aplicación
 
@@ -383,11 +386,37 @@ tpfinal/
 5. `Router` busca el recurso y la acción correspondiente.
 6. El controlador ejecuta la acción y devuelve un resultado.
 7. El servidor responde con `OK <resultado>` o `ERROR <mensaje>`.
-
-## Trabajo pendiente
-
-- Registrar `ControladorNotas` en `Main`.
-- Implementar carga, consulta y modificación de notas.
-- Agregar persistencia mediante archivos o una base de datos.
-- Aplicar los permisos definidos por los controladores.
-- Incorporar pruebas automáticas para usuarios, notas y el framework.
+ 
+ Ejemplo: 
+ Conectado a localhost:3000 (escriba 'salir' para terminar)
+< Bienvenido
+usuarios/login/admin/admin
+< OK Hola, admin (ADMIN)
+notas/cargar/ana/8
+< OK Nota 1 cargada para ana: 8.0
+notas/cargar/ana/9
+< OK Nota 2 cargada para ana: 9.0
+notas/cargar/ana/7
+< OK Nota 3 cargada para ana: 7.0
+notas/ver    
+< ERROR Falta el parametro 'alumno'
+notas/ver/ana
+< OK ana [nota1=8.0, nota2=9.0, nota3=7.0]
+usuarios/loguot
+< ERROR No existe la accion: 'loguot'
+usuarios/logout
+< OK Chau admin
+usuarios/login/ana/1234
+< OK Hola, ana (USUARIO)
+notas/ver
+< ERROR Falta el parametro 'alumno'
+notas/ver/ana
+< OK ana [nota1=8.0, nota2=9.0, nota3=7.0]
+usuarios/logout
+< OK Chau ana
+usuarios/login/beto/4321
+< OK Hola, beto (USUARIO)
+notas/ver/ana
+< OK ana [nota1=8.0, nota2=9.0, nota3=7.0]
+salir
+Testeo para hacer cambios finales

@@ -1,7 +1,6 @@
 package app.main;
 
-import java.io.IOException;
-
+import framework.ExcepcionesChecked;
 import framework.Servicios;
 import framework.Servidor;
 
@@ -19,7 +18,7 @@ public class Main {
 
 		try {
 			servidor.iniciar();
-		} catch (IOException ex) {
+		} catch (ExcepcionesChecked ex) {
 			System.out.println("No se pudo iniciar el servidor: " + ex.getMessage());
 		}
 	}
