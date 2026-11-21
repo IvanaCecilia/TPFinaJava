@@ -11,12 +11,12 @@ import framework.Solicitud;
 import framework.Validador;
 import framework.ValidadorDecimales;
 import framework.ValidadorLargoTexto;
-import framework.ValidadorRangoNota;
+import framework.ValidadorRangoNumerico;
 
 public class ControladorNotas implements Controlador {
 
 	private static final Validador<String> VALIDADOR_NOMBRE_ALUMNO = new ValidadorLargoTexto(3, 40, "nombre del alumno");
-	private static final Validador<String> VALIDADOR_NOTA = new ValidadorRangoNota(0, 10, "nota")
+	private static final Validador<String> VALIDADOR_NOTA = new ValidadorRangoNumerico(0, 10, "nota")
 			.y(new ValidadorDecimales(2, "nota"));
 
 	private ServicioNotas notas;
