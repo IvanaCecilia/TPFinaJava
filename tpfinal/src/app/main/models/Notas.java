@@ -1,4 +1,4 @@
-package app.models;
+package app.main.models;
 
 public class Notas {
 	private String nombre;

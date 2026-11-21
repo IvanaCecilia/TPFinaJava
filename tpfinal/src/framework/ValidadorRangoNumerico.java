@@ -2,12 +2,12 @@ package framework;
 
 
 
-public class ValidadorRangoNota implements Validador<String> {
+public class ValidadorRangoNumerico implements Validador<String> {
     private final double min;
     private final double max;
     private final String nombreCampo;
 
-    public ValidadorRangoNota(double min, double max, String nombreCampo) {
+    public ValidadorRangoNumerico(double min, double max, String nombreCampo) {
         this.min = min;
         this.max = max;
         this.nombreCampo = nombreCampo;
