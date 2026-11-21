@@ -21,7 +21,7 @@ public class Servidor {
 		return servicios;
 	}
 
-	public void iniciar() throws IOException {
+	public void iniciar() throws ExcepcionesChecked {
 		try (ServerSocket servidor = new ServerSocket(puerto)) {
 			System.out.println("Servidor abierto en puerto: " + puerto);
 			while (true) {
@@ -29,6 +29,8 @@ public class Servidor {
 				Thread hilo = new Thread(() -> atender(socket));
 				hilo.start();
 			}
+		} catch (IOException ex) {
+			throw new ExcepcionesChecked("No se pudo iniciar o mantener el servidor en el puerto " + puerto, ex);
 		}
 	}
 
