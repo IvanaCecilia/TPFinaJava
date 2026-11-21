@@ -48,13 +48,13 @@ public class ControladorNotas implements Controlador {
 		);
 	}
 
-	public String ver(Solicitud s) {
+	public synchronized String ver(Solicitud s) {
 		String nombreAlumno = s.getParametro(0, "alumno", VALIDADOR_NOMBRE_ALUMNO);
 		Notas registro = notas.verNota(nombreAlumno);
 		return registro.toString();
 	}
 
-	public String cargar(Solicitud s) {
+	public synchronized String cargar(Solicitud s) {
 		String nombreAlumno = s.getParametro(0, "alumno", VALIDADOR_NOMBRE_ALUMNO);
 		String notaTexto = s.getParametro(1, "nota", VALIDADOR_NOTA);
 		double nota = Double.parseDouble(notaTexto.replace(",", "."));
@@ -62,7 +62,7 @@ public class ControladorNotas implements Controlador {
 		return "Nota " + posicion + " cargada para " + nombreAlumno + ": " + nota;
 	}
 
-	public String modificar(Solicitud s) {
+	public synchronized String modificar(Solicitud s) {
 		String nombreAlumno = s.getParametro(0, "alumno", VALIDADOR_NOMBRE_ALUMNO);
 		int posicion = parsearPosicion(s.getParametro(1, "posicion"));
 		String notaTexto = s.getParametro(2, "nota", VALIDADOR_NOTA);
@@ -71,7 +71,7 @@ public class ControladorNotas implements Controlador {
 		return "Nota " + posicion + " modificada para " + nombreAlumno + ": " + nota;
 	}
 
-	private int parsearPosicion(String valor) {
+	private synchronized int parsearPosicion(String valor) {
 		try {
 			int posicion = Integer.parseInt(valor.trim());
 			if (posicion < 1 || posicion > 3) {
