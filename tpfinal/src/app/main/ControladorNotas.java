@@ -3,7 +3,7 @@ package app.main;
 import java.util.Map;
 import java.util.function.Function;
 
-import app.models.Notas;
+import app.main.models.Notas;
 import framework.Controlador;
 import framework.Rol;
 import framework.Servicios;

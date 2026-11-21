@@ -3,7 +3,7 @@ package app.main;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import app.models.Notas;
+import app.main.models.Notas;
 import framework.ExcepcionesFramework;
 
 public class ServicioNotas {
