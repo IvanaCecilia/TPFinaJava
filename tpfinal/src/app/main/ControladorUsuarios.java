@@ -37,7 +37,7 @@ public class ControladorUsuarios implements Controlador {
 
 	// -> /usuarios/login/nombre/clave
 	private String login(Solicitud s) {
-		if(usuarioLogueado(s) != "(nadie)"){
+		if(!usuarioLogueado(s).equals("(nadie)")){
 			return "cierra sesion primero";
 		}else{
 		String nombre = s.getParametro(0, "nombre");
