@@ -50,6 +50,14 @@ public class ControladorNotas implements Controlador {
 
 	public synchronized String ver(Solicitud s) {
 		String nombreAlumno = s.getParametro(0, "alumno", VALIDADOR_NOMBRE_ALUMNO);
+
+		boolean esAdmin = s.getSesion().getRol() == Rol.ADMIN;
+		boolean esMismoAlumno = nombreAlumno.trim().equalsIgnoreCase(s.getSesion().getUsuario());
+
+		if (!esAdmin && !esMismoAlumno) {
+			throw new framework.ExcepcionesFramework("No tienes permiso para ver las notas de otro alumno.");
+		}
+
 		Notas registro = notas.verNota(nombreAlumno);
 		return registro.toString();
 	}
