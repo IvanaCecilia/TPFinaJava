@@ -387,7 +387,9 @@ tpfinal/
 6. El controlador ejecuta la acción y devuelve un resultado.
 7. El servidor responde con `OK <resultado>` o `ERROR <mensaje>`.
  
- Ejemplo: 
+Testeo para hacer cambios finales
+
+ Ejemplo: prueba1
  Conectado a localhost:3000 (escriba 'salir' para terminar)
 < Bienvenido
 usuarios/login/admin/admin
@@ -419,4 +421,36 @@ usuarios/login/beto/4321
 notas/ver/ana
 < OK ana [nota1=8.0, nota2=9.0, nota3=7.0]
 salir
-Testeo para hacer cambios finales
+
+
+Prueba:2
+Conectado a localhost:3000 (escriba 'salir' para terminar)
+< Bienvenido
+usuarios/login/admin/admin
+< OK Hola, admin (ADMIN)
+notas/cargar/ana/6
+< OK Nota 1 cargada para ana: 6.0
+notas/cargar/ana/7
+< OK Nota 2 cargada para ana: 7.0
+notas/cargar/9
+< ERROR El campo 'nombre del alumno' debe tener entre 3 y 40 caracteres
+notas/ver/ana
+< OK ana [nota1=6.0, nota2=7.0, nota3=-]
+notas/cargar/ana/9
+< OK Nota 3 cargada para ana: 9.0
+notas/ver/ana
+< OK ana [nota1=6.0, nota2=7.0, nota3=9.0]
+usuarios/logout
+< OK Chau admin
+usuarios/login/beto/4321
+< OK Hola, beto (USUARIO)
+notas/ver/ana
+< ERROR No tienes permiso para ver las notas de otro alumno.
+usuarios/logout
+< OK Chau beto
+usuarios/login/ana/1234
+< OK Hola, ana (USUARIO)
+notas/ver/ana
+< OK ana [nota1=6.0, nota2=7.0, nota3=9.0]
+usuarios/logout
+< OK Chau ana
